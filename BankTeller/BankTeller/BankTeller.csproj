@@ -163,7 +163,8 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="DataAccess\Default.cs" />
+    <Compile Include="DataAccess\DefaultDA.cs" />
+    <Compile Include="DataAccess\EditAccountDA.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

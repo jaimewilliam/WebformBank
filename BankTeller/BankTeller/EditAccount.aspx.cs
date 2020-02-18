@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BankTeller.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -24,37 +25,23 @@ namespace BankTeller
                     AcctId = Convert.ToInt32(Request.QueryString["Id"]);
                 }
 
-                using (SqlCommand cmd = new SqlCommand("ACM_List", connect))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@AccountId", AcctId));
-                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
+                DataTable dt = EditAccountDA.ACM_List(AcctId);
 
-                    if (dt.Rows.Count > 0)
-                    {
-                        LblCustIdFK.Text = dt.Rows[0]["CustomerFK"].ToString();
-                        LblAcctId.Text = dt.Rows[0]["AccountId"].ToString();
-                        Txtacctno.Text = dt.Rows[0]["AccountNo"].ToString();
-                        Txtname.Text = dt.Rows[0]["CustomerName"].ToString();
-                        //Txtmobile.Text = dt.Rows[0]["MobileNumber"].ToString();
-                    }
+                if (dt.Rows.Count > 0)
+                {
+                    LblCustIdFK.Text = dt.Rows[0]["CustomerFK"].ToString();
+                    LblAcctId.Text = dt.Rows[0]["AccountId"].ToString();
+                    Txtacctno.Text = dt.Rows[0]["AccountNo"].ToString();
+                    Txtname.Text = dt.Rows[0]["CustomerName"].ToString();
+                    //Txtmobile.Text = dt.Rows[0]["MobileNumber"].ToString();
                 }
 
-                using (SqlCommand rcmd = new SqlCommand("ViewMobile", connect))
-                {
-                    rcmd.CommandType = CommandType.StoredProcedure;
-                    rcmd.Parameters.Add(new SqlParameter("@CustomerFK", LblCustIdFK.Text));
-                    SqlDataAdapter rsda = new SqlDataAdapter(rcmd);
-                    DataTable rdt = new DataTable();
-                    rsda.Fill(rdt);
+                DataTable rdt = EditAccountDA.ViewMobile(LblCustIdFK.Text);
 
-                    if (rdt.Rows.Count > 0)
-                    {
-                        Repeater1.DataSource = rdt;
-                        Repeater1.DataBind();
-                    }
+                if (rdt.Rows.Count > 0)
+                {
+                    Repeater1.DataSource = rdt;
+                    Repeater1.DataBind();
                 }
 
                 if (AcctId == 0)
@@ -70,123 +57,47 @@ namespace BankTeller
             string cidFK = LblCustIdFK.Text.ToString();
             string btnType = Btnsave.Text.ToString();
             int CustomerFK = 0;
+            string name = Txtname.Text.ToString();
+            string amount = Txtamount.Text.ToString();
 
             if (btnType == "Save New")
             {
-                //***Execute Insert command and return inserted Id in Sql!
-                using (SqlCommand cmd = new SqlCommand("INSERTCustomer", connect))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@CustomerName", Txtname.Text.ToString());
-                    cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
-                    connect.Open();
+                CustomerFK = EditAccountDA.INSERTCustomer(name);
 
-                    CustomerFK = (int)cmd.ExecuteScalar();
-
-                    if (connect.State == System.Data.ConnectionState.Open)
-                        connect.Close();
-                }
 
                 //***Get the Row Count!
                 string count = null;
-                SqlCommand cmdacct = new SqlCommand("COUNTAccount", connect);
-                cmdacct.CommandType = CommandType.StoredProcedure;
-                SqlDataAdapter sdaacct = new SqlDataAdapter(cmdacct);
-                DataTable dtacct = new DataTable();
-                sdaacct.Fill(dtacct);
+                DataTable dtacct = EditAccountDA.Count();
 
                 if (dtacct.Rows.Count > 0)
                 {
                     count = dtacct.Rows[0]["rowcount"].ToString();
                 }
+
+
                 //***Generate Account number from Row Count!
                 string acctnum = (0 + count).ToString().PadLeft(10, '0');
-
-                using (SqlCommand cmd = new SqlCommand("INSERTAccount", connect))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@AccountNo", acctnum);
-                    cmd.Parameters.AddWithValue("@CustomerFK", CustomerFK);
-                    cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
-
-                    connect.Open();
-                    cmd.ExecuteNonQuery();
-
-                }
-                connect.Close();
+                EditAccountDA.INSERTAccount(acctnum, CustomerFK);
 
                 string numbers = Request["additionalnumber"].ToString();
-                if (!string.IsNullOrEmpty(numbers))
-                {
-                    string[] newnumbers = numbers.Split(',');
+                EditAccountDA.INSERTMobileNum(numbers, CustomerFK);
+                
 
-                    for (int i = 0; i < newnumbers.Count(); i++)
-                    {
-                        using (SqlCommand cmd = new SqlCommand("INSERTMobileNum", connect))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@MobileNumber", newnumbers[i]);
-                            cmd.Parameters.AddWithValue("@CustomerFK", CustomerFK);
-                            cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
-
-                            connect.Open();
-                            cmd.ExecuteNonQuery();
-
-                        }
-                        connect.Close();
-                    }
-                }
-
-
-
-                using (SqlCommand cmd = new SqlCommand("INSERTTrans", connect))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Amount", Txtamount.Text.ToString());
-                    cmd.Parameters.AddWithValue("@CustomerFK", CustomerFK);
-                    cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@RemainingBalance", Txtamount.Text.ToString());
-
-                    connect.Open();
-                    cmd.ExecuteNonQuery();
-
-                }
-                connect.Close();
+                EditAccountDA.INSERTTrans(amount, CustomerFK);
+                
             }
             else
             {
-                using (SqlCommand cmd = new SqlCommand("EditUpdate", connect))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@CustomerFK", cidFK));
-                    cmd.Parameters.AddWithValue("@CustomerName", Txtname.Text.ToString());
-
-                    connect.Open();
-                    cmd.ExecuteNonQuery();
-
-                }
-                connect.Close();
+                EditAccountDA.UpdateCustomer(cidFK, name);
+                
 
                 foreach (RepeaterItem item in Repeater1.Items)
                 {
-                    using (SqlCommand cmd = new SqlCommand("UpdateMobileNum", connect))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        Label mblId = (Label)item.FindControl("Lblmblnum");
-                        cmd.Parameters.Add(new SqlParameter("@MobileID", mblId.Text));
-                        TextBox txtNo = (TextBox)item.FindControl("Txtmobile");
-                        cmd.Parameters.AddWithValue("@MobileNumber", txtNo.Text.ToString());
-                        cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                        cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
+                    Label mblId = (Label)item.FindControl("Lblmblnum");
+                    TextBox txtNo = (TextBox)item.FindControl("Txtmobile");
 
-                        connect.Open();
-                        cmd.ExecuteNonQuery();
-                    }
-                    connect.Close();
+                    EditAccountDA.UpdateMobileNum(mblId, txtNo);
+                    
                 }
 
                 string numbers = Request["additionalnumber"].ToString();
@@ -194,26 +105,31 @@ namespace BankTeller
                 {
                     string[] newnumbers = numbers.Split(',');
 
-                    for (int i = 0; i < newnumbers.Count(); i++)
-                    {
-                        using (SqlCommand cmd = new SqlCommand("INSERTMobileNum", connect))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@MobileNumber", newnumbers[i]);
-                            cmd.Parameters.AddWithValue("@CustomerFK", cidFK);
-                            cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
+                    EditAccountDA.InsertUpdateMobileNum(cidFK, newnumbers);
 
-                            connect.Open();
-                            cmd.ExecuteNonQuery();
+                    //for (int i = 0; i < newnumbers.Count(); i++)
+                    //{
 
-                        }
-                        connect.Close();
-                    }
+                    //    using (SqlCommand cmd = new SqlCommand("INSERTMobileNum", connect))
+                    //    {
+                    //        cmd.CommandType = CommandType.StoredProcedure;
+                    //        cmd.Parameters.AddWithValue("@MobileNumber", newnumbers[i]);
+                    //        cmd.Parameters.AddWithValue("@CustomerFK", cidFK);
+                    //        cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
+                    //        cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
+
+                    //        connect.Open();
+                    //        cmd.ExecuteNonQuery();
+
+                    //    }
+                    //    connect.Close();
+                    //}
                 }
+
+
             }
 
-            
+
         }
 
         protected void Btncancel_Click(object sender, EventArgs e)

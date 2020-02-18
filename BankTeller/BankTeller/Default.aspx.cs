@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BankTeller.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -18,23 +19,17 @@ namespace BankTeller
         {
             if (!IsPostBack)
             {
-                using (SqlCommand cmd = new SqlCommand("ACM_List", connect))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
+                DataTable dt = DefaultDA.List();
 
-                    if (dt.Rows.Count > 0)
-                    {
-                        datagrid1.DataSource = dt;
-                        datagrid1.DataBind();
-                    }
+                if (dt.Rows.Count > 0)
+                {
+                    datagrid1.DataSource = dt;
+                    datagrid1.DataBind();
                 }
             }
-            
-            
-            
+
+
+
         }
 
         protected void datagrid1_RowCommand(object sender, GridViewCommandEventArgs e)

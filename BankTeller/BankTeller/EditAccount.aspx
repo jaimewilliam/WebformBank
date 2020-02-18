@@ -18,29 +18,34 @@
                 </div>
             </div>
 
-            <div class="form-group editmobile divnum">
+            <div class="form-group editmobile">
                 <asp:Repeater ID="Repeater1" runat="server">
                     <ItemTemplate>
-                        <asp:Label ID="Lblmblnum" runat="server" Text='<%#  Eval("MobileNumberID") %>' Style="display:none"></asp:Label>
+                        <asp:Label ID="Lblmblnum" runat="server" Text='<%#  Eval("MobileNumberID") %>' Style="display:none" ></asp:Label>
                         <div class="col-md-10 clonenumber">
-                            <asp:Label ID="Label3" runat="server" Text="Mobile No:" class="control-label col-xs-3"></asp:Label><asp:TextBox ID="Txtmobile" runat="server" class="form-control mobileinput" Text='<%#  Eval("MobileNumber") %>' onblur = "Focusout(this);" onkeyup = "onkeyUP(this);" onchange = "OnChangeEvent(this)"></asp:TextBox>
+                            <input id="Text1" type="text" class="numId" value='<%#  Eval("MobileNumberID") %>' />
+                            <asp:Label ID="Label3" runat="server" Text="Mobile No:" class="control-label col-xs-3"></asp:Label>
+                            <asp:TextBox ID="Txtmobile" runat="server" class="form-control mobileinput" Text='<%#  Eval("MobileNumber") %>' onblur = "Focusout(this);" onkeyup = "onkeyUP(this);" onchange = "OnChangeEvent(this)"></asp:TextBox>
                         </div>
                     </ItemTemplate>
                 </asp:Repeater>
             </div>
 
-            <div class="form-group addmobile divnum">
+            <div class="form-group addmobile">
                 <div class="col-md-10 clonenumber">
-                    <asp:Label ID="Label4" runat="server" Text="Mobile No:" class="control-label col-xs-3"></asp:Label><asp:TextBox ID="Txtaddmobile" runat="server" class="form-control" onblur = "Focusout(this);" onkeyup = "onkeyUP(this);" onchange = "OnChangeEvent(this)"></asp:TextBox>
+                    <input id="Text1" type="text" class="numId" />
+                    <asp:Label ID="Label4" runat="server" Text="Mobile No:" class="control-label col-xs-3"></asp:Label>
+                    <asp:TextBox ID="Txtaddmobile" runat="server" class="form-control mobileinput" onblur = "Focusout(this);" onkeyup = "onkeyUP(this);" onchange = "OnChangeEvent(this)"></asp:TextBox>
                 </div>
             </div>
             <div class="form-group addamount">
                 <div class="col-md-10">
-                    <asp:Label ID="Label5" runat="server" Text="Initial Deposit Amount:" class="control-label col-xs-3"></asp:Label><asp:TextBox ID="Txtamount" runat="server" class="form-control"></asp:TextBox>
+                    <asp:Label ID="Label5" runat="server" Text="Initial Deposit Amount:" class="control-label col-xs-3"></asp:Label>
+                    <asp:TextBox ID="Txtamount" runat="server" class="form-control"></asp:TextBox>
                 </div>
             </div>
         </div>
-        <input id="extranum" name="additionalnumber" style="display:none" />
+        <input id="extranum" name="additionalnumber" style="display:block" />
         <div class="form-control-static">
             <p style="float: right">
                 <asp:Button class="btn btn-primary" ID="Btncancel" runat="server" Text="Back" OnClick="Btncancel_Click" />
@@ -76,31 +81,25 @@
                 var num = $(".clonenumber");
                 var newnum = $(num[0]).clone();
                 $(newnum).find('.mobileinput').addClass('noval');
-                $(newnum).appendTo(".divnum").find('input').val('');
-                $(newnum).find('input').addClass('noval');
+                $(newnum).appendTo($(num[0]).parent()).find('input').val('');
+                $(newnum).find('.mobileinput').addClass('noval');
             }
         }
 
         function OnChangeEvent(getnum) {
-        
-            //if ($(getnum).parent().parent().find('.numId').val() === '') {
 
-            //    var xnum = $(getnum).val();
-            //    //***jQuery push multiple values in input tag
-            //    var oldValue = $("#extranum").val();
-            //    var arr = oldValue === "" ? [] : oldValue.split(',');
-            //    arr.push(xnum);
-            //    var newValue = arr.join(',');
-            //    jQuery('#extranum').val(newValue);
-            //}
+           if ($(getnum).parent().find('.numId').val() === '') {
 
-                var xnum = $(getnum).val();
-                //***jQuery push multiple values in input tag
-                var oldValue = $("#extranum").val();
-                var arr = oldValue === "" ? [] : oldValue.split(',');
-                arr.push(xnum);
-                var newValue = arr.join(',');
-                jQuery('#extranum').val(newValue);
+            var xnum = $(getnum).val();
+            //***jQuery push multiple values in input tag
+            var oldValue = $("#extranum").val();
+            var arr = oldValue === "" ? [] : oldValue.split(',');
+            arr.push(xnum);
+            var newValue = arr.join(',');
+            jQuery('#extranum').val(newValue);
+
+            } 
+                
         }
     </script>
 
