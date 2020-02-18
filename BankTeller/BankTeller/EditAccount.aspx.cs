@@ -105,31 +105,14 @@ namespace BankTeller
                 {
                     string[] newnumbers = numbers.Split(',');
 
-                    EditAccountDA.InsertUpdateMobileNum(cidFK, newnumbers);
-
-                    //for (int i = 0; i < newnumbers.Count(); i++)
-                    //{
-
-                    //    using (SqlCommand cmd = new SqlCommand("INSERTMobileNum", connect))
-                    //    {
-                    //        cmd.CommandType = CommandType.StoredProcedure;
-                    //        cmd.Parameters.AddWithValue("@MobileNumber", newnumbers[i]);
-                    //        cmd.Parameters.AddWithValue("@CustomerFK", cidFK);
-                    //        cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                    //        cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
-
-                    //        connect.Open();
-                    //        cmd.ExecuteNonQuery();
-
-                    //    }
-                    //    connect.Close();
-                    //}
+                    for (int i = 0; i < newnumbers.Count(); i++)
+                    {
+                        
+                        EditAccountDA.InsertUpdateMobileNum(cidFK, newnumbers[i]);
+                        
+                    }
                 }
-
-
             }
-
-
         }
 
         protected void Btncancel_Click(object sender, EventArgs e)

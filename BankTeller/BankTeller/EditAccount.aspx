@@ -23,7 +23,7 @@
                     <ItemTemplate>
                         <asp:Label ID="Lblmblnum" runat="server" Text='<%#  Eval("MobileNumberID") %>' Style="display:none" ></asp:Label>
                         <div class="col-md-10 clonenumber">
-                            <input id="Text1" type="text" class="numId" value='<%#  Eval("MobileNumberID") %>' />
+                            <input id="Text1" type="text" class="numId" value='<%#  Eval("MobileNumberID") %>' style="display:none" />
                             <asp:Label ID="Label3" runat="server" Text="Mobile No:" class="control-label col-xs-3"></asp:Label>
                             <asp:TextBox ID="Txtmobile" runat="server" class="form-control mobileinput" Text='<%#  Eval("MobileNumber") %>' onblur = "Focusout(this);" onkeyup = "onkeyUP(this);" onchange = "OnChangeEvent(this)"></asp:TextBox>
                         </div>
@@ -33,7 +33,7 @@
 
             <div class="form-group addmobile">
                 <div class="col-md-10 clonenumber">
-                    <input id="Text1" type="text" class="numId" />
+                    <input id="Text1" type="text" class="numId" style="display:none" />
                     <asp:Label ID="Label4" runat="server" Text="Mobile No:" class="control-label col-xs-3"></asp:Label>
                     <asp:TextBox ID="Txtaddmobile" runat="server" class="form-control mobileinput" onblur = "Focusout(this);" onkeyup = "onkeyUP(this);" onchange = "OnChangeEvent(this)"></asp:TextBox>
                 </div>

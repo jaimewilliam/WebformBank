@@ -167,25 +167,21 @@ namespace BankTeller.DataAccess
             connect.Close();
         }
 
-        public static void InsertUpdateMobileNum(string cidFK, string[] newnumbers)
+        public static void InsertUpdateMobileNum(string cidFK, string newnumbers)
         {
-            for (int i = 0; i < newnumbers.Count(); i++)
+            using (SqlCommand cmd = new SqlCommand("INSERTMobileNum", connect))
             {
-                using (SqlCommand cmd = new SqlCommand("INSERTMobileNum", connect))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@MobileNumber", newnumbers[i]);
-                    cmd.Parameters.AddWithValue("@CustomerFK", cidFK);
-                    cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@MobileNumber", newnumbers);
+                cmd.Parameters.AddWithValue("@CustomerFK", cidFK);
+                cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
+                cmd.Parameters.AddWithValue("@UpdateDate", DateTime.Now);
 
-                    connect.Open();
-                    cmd.ExecuteNonQuery();
+                connect.Open();
+                cmd.ExecuteNonQuery();
 
-                }
-                connect.Close();
             }
-
+            connect.Close();
         }
     }
 }

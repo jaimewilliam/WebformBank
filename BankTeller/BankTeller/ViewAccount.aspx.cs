@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BankTeller.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -23,36 +24,25 @@ namespace BankTeller
             }
 
             //***For Textboxes!
-            using (SqlCommand cmd = new SqlCommand("ViewAccount", connect))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@AccountId", id));
-                SqlDataAdapter sda = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                sda.Fill(dt);
 
-                if (dt.Rows.Count > 0)
-                {
-                    LblId.Text = dt.Rows[0]["AccountId"].ToString();
-                    Txtacctno.Text = dt.Rows[0]["AccountNo"].ToString();
-                    Txtname.Text = dt.Rows[0]["CustomerName"].ToString();
-                }
+            DataTable dt = ViewAccountDA.ViewAccount(id);
+
+            if (dt.Rows.Count > 0)
+            {
+                LblId.Text = dt.Rows[0]["AccountId"].ToString();
+                Txtacctno.Text = dt.Rows[0]["AccountNo"].ToString();
+                Txtname.Text = dt.Rows[0]["CustomerName"].ToString();
             }
 
-            //***For Gridview!
-            using (SqlCommand gcmd = new SqlCommand("ViewTrans", connect))
-            {
-                gcmd.CommandType = CommandType.StoredProcedure;
-                gcmd.Parameters.Add(new SqlParameter("@AccountId", id));
-                SqlDataAdapter gsda = new SqlDataAdapter(gcmd);
-                DataTable gdt = new DataTable();
-                gsda.Fill(gdt);
 
-                if (gdt.Rows.Count > 0)
-                {
-                    GridView1.DataSource = gdt;
-                    GridView1.DataBind();
-                }
+            //***For Gridview!
+
+            DataTable gdt = ViewAccountDA.ViewTrans(id);
+
+            if (gdt.Rows.Count > 0)
+            {
+                GridView1.DataSource = gdt;
+                GridView1.DataBind();
             }
             
         }
