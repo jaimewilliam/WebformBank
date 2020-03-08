@@ -165,6 +165,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="DataAccess\DefaultDA.cs" />
     <Compile Include="DataAccess\EditAccountDA.cs" />
+    <Compile Include="DataAccess\TellerDA.cs" />
     <Compile Include="DataAccess\ViewAccountDA.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
